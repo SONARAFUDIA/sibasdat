@@ -16,7 +16,7 @@ if (isset($_GET['unlock']) && kunci_sedang_digunakan($koneksi, $tabel) === $user
 
 <head>
     <title>Modul Penjualan</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/next.css">
 </head>
 
 <body>

@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>InventoryZe</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/next.css">
 </head>
 <body>
     <h1>Sistem Inventori Sederhana</h1>
