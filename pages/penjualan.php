@@ -5,28 +5,51 @@ session_start();
 
 $_SESSION['user'] = $_SESSION['user'] ?? 'user_' . rand(1000, 9999);
 $user = $_SESSION['user'];
+$tabel = 'penjualan';
 
-// CEK apakah user saat ini adalah pemilik kunci
-$tabel = 'stok';
-$pengunci = kunci_sedang_digunakan($koneksi, $tabel);
-
-if ($pengunci === $user) {
-    // Hanya jika user ini pemegang kunci, lepaskan
+if (isset($_GET['unlock']) && kunci_sedang_digunakan($koneksi, $tabel) === $user) {
     nonaktifkan_kunci($koneksi, $tabel, $user);
 }
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Modul Barang</title>
+    <title>Modul Penjualan</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body>
-<h2>Modul Barang (Stok)</h2>
-<nav>
-    <a href="penjualan_form.php">➕ Tambah / Ubah Barang</a>
-    <a href="penjualan_display.php">📦 Tampilkan Data Barang</a>
-    <a href="../index.php">🏠 Kembali</a>
-</nav>
+    <h2>Data Penjualan</h2>
+    <div class="toolbar">
+        <a class="btn-aksi btn-tambah" href="penjualan_form.php">➕ Tambah Penjualan</a>
+        <a class="btn-aksi btn-kembali" href="../index.php">🏠 Kembali</a>
+    </div>
+    
+    <table>
+        <tr>
+            <th>Kode Transaksi</th>
+            <th>Tanggal</th>
+            <th>Kode Barang</th>
+            <th>Jumlah</th>
+            <th>Aksi</th>
+        </tr>
+        <?php
+        $result = $koneksi->query("SELECT * FROM t_jual");
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>
+            <td>{$row['kd_trans']}</td>
+            <td>{$row['tgl_trans']}</td>
+            <td>{$row['kode_brg']}</td>
+            <td>{$row['jml_jual']}</td>
+            <td>
+                <a class='btn-aksi btn-edit' href='penjualan_form.php?edit={$row['kd_trans']}'>Edit</a>
+                <a class='btn-aksi btn-delete' href='../aksi/jual_proses.php?action=delete&kd_trans={$row['kd_trans']}'>Delete</a>
+            </td>
+        </tr>";
+        }
+        ?>
+    </table>
 </body>
+
 </html>

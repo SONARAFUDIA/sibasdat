@@ -48,12 +48,12 @@ try {
 
     $koneksi->commit();
     nonaktifkan_kunci($koneksi, $tabel, $user);
-    header("Location: ../pages/stok_display.php");
+    header("Location: ../pages/stok.php");
     exit;
 
 } catch (Exception $e) {
     $koneksi->rollback();
     echo "<div class='error-banner'>Terjadi kesalahan: " . $e->getMessage() . "</div>";
-    echo "<a href='../pages/stok_display.php'>⬅ Kembali</a>";
+    echo "<a href='../pages/stok.php'>⬅ Kembali</a>";
 }
 ?>

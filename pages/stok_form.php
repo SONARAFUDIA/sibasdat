@@ -56,7 +56,9 @@ if (isset($_GET['edit'])) {
     <input type="text" name="satuan" placeholder="Satuan" value="<?= $edit ? $data['satuan'] : '' ?>" required>
     <input type="number" name="jml_stok" placeholder="Jumlah Stok" value="<?= $edit ? $data['jml_stok'] : '' ?>" required>
     <button type="submit">Save</button>
-    <a href="stok.php"><button type="button">Cancel</button></a>
+    <a href="stok.php?unlock=true"><button type="button">Cancel</button></a>
+
+    <!-- <a href="stok.php"><button type="button">Cancel</button></a> -->
 </form>
 </body>
 </html>

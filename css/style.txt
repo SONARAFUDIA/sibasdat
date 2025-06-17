@@ -1,0 +1,189 @@
+/* ==========================
+   Global Styles
+========================== */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+    margin: 0;
+    padding: 20px;
+}
+
+h1, h2, h3 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+/* ==========================
+   Navigation
+========================== */
+nav {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+nav a {
+    margin: 0 15px;
+    padding: 10px 20px;
+    text-decoration: none;
+    background-color: #2980b9;
+    color: white;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+nav a:hover {
+    background-color: #3498db;
+}
+
+/* ==========================
+   Form Styling
+========================== */
+form {
+    background-color: #ffffff;
+    padding: 20px;
+    margin: 20px auto;
+    max-width: 600px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+form input,
+form select {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* ==========================
+   Buttons (Form & Toolbar)
+========================== */
+button,
+form button,
+.btn-aksi,
+.btn-primary,
+.btn-secondary {
+    display: inline-block;
+    padding: 8px 14px;
+    margin: 6px 5px 6px 0;
+    font-weight: bold;
+    text-decoration: none;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    background-color: #95a5a6;
+}
+
+button:hover,
+form button:hover,
+.btn-aksi:hover,
+.btn-primary:hover,
+.btn-secondary:hover {
+    opacity: 0.9;
+}
+
+/* Button Variants */
+.btn-tambah,
+form button[type="submit"] {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.btn-reset,
+form button[type="reset"] {
+    background-color: #e67e22;
+    color: white;
+}
+
+.btn-kembali,
+form button[type="button"] {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn-edit {
+    background-color: #2980b9;
+    color: white;
+}
+
+.btn-delete {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #7f8c8d;
+    color: white;
+}
+
+/* ==========================
+   Table Styling
+========================== */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 25px;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+table th,
+table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+    font-size: 14px;
+}
+
+table th {
+    background-color: #3498db;
+    color: white;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* ==========================
+   Toolbar / Action Layout
+========================== */
+.toolbar {
+    margin-bottom: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* ==========================
+   Misc
+========================== */
+a.action-link {
+    color: #2980b9;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+a.action-link:hover {
+    text-decoration: underline;
+}
+
+.error-banner {
+    background-color: #e74c3c;
+    color: white;
+    padding: 12px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
