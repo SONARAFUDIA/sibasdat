@@ -3,7 +3,8 @@ include '../db/connect.php';
 include '../fungsi/kunci.php';
 session_start();
 
-$_SESSION['user'] = $_SESSION['user'] ?? 'user_' . rand(1000,9999);
+// $_SESSION['user'] = $_SESSION['user'] ?? 'user_' . rand(1000,9999);
+$_SESSION['user'] = $koneksi->query("SELECT USER()")->fetch_row()[0];
 $user = $_SESSION['user'];
 $tabel = 'stok';
 $pengunci = kunci_sedang_digunakan($koneksi, $tabel);

@@ -3,7 +3,8 @@ include '../db/connect.php';
 include '../fungsi/kunci.php';
 session_start();
 
-$_SESSION['user'] = $_SESSION['user'] ?? 'user_' . rand(1000, 9999);
+// $_SESSION['user'] = $_SESSION['user'] ?? 'user_' . rand(1000, 9999);
+$_SESSION['user'] = $koneksi->query("SELECT USER()")->fetch_row()[0];
 $user = $_SESSION['user'];
 $tabel = 'penjualan';
 
@@ -27,33 +28,63 @@ $barang_list = $koneksi->query("SELECT kode_brg, nama_brg FROM stok");
 ?>
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Form Penjualan</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
+
 <body>
-<h2><?= $edit ? 'Edit' : 'Tambah' ?> Data Penjualan</h2>
+    <p style="text-align:right; font-size:14px;">Login sebagai: <strong><?= htmlspecialchars($user) ?></strong></p>
 
-<form method="POST" action="../aksi/jual_proses.php?action=<?= $edit ? 'update' : 'insert' ?>">
-    <input type="text" name="kd_trans" placeholder="Kode Transaksi" value="<?= $edit ? $data['kd_trans'] : '' ?>" required <?= $edit ? 'readonly' : '' ?>>
+    <h2><?= $edit ? 'Edit' : 'Tambah' ?> Data Penjualan</h2>
 
-    <input type="date" name="tgl_trans" value="<?= $edit ? $data['tgl_trans'] : '' ?>" required>
+    <form method="POST" action="../aksi/jual_proses.php?action=<?= $edit ? 'update' : 'insert' ?>">
+        <input type="text" name="kd_trans" placeholder="Kode Transaksi" value="<?= $edit ? $data['kd_trans'] : '' ?>" required <?= $edit ? 'readonly' : '' ?>>
 
-    <label for="kode_brg">Pilih Barang:</label>
-    <select name="kode_brg" required>
-        <option value="">-- Pilih Barang --</option>
-        <?php while ($barang = $barang_list->fetch_assoc()): ?>
-            <option value="<?= $barang['kode_brg'] ?>"
-                <?= ($edit && $data['kode_brg'] === $barang['kode_brg']) ? 'selected' : '' ?>>
-                <?= $barang['kode_brg'] ?> - <?= $barang['nama_brg'] ?>
-            </option>
-        <?php endwhile; ?>
-    </select>
+        <input type="date" name="tgl_trans" value="<?= $edit ? $data['tgl_trans'] : '' ?>" required>
 
-    <input type="number" name="jml_jual" placeholder="Jumlah Jual" value="<?= $edit ? $data['jml_jual'] : '' ?>" required>
+        <label for="kode_brg">Pilih Barang:</label>
+        <select name="kode_brg" required>
+            <option value="">-- Pilih Barang --</option>
+            <?php while ($barang = $barang_list->fetch_assoc()): ?>
+                <option value="<?= $barang['kode_brg'] ?>"
+                    <?= ($edit && $data['kode_brg'] === $barang['kode_brg']) ? 'selected' : '' ?>>
+                    <?= $barang['kode_brg'] ?> - <?= $barang['nama_brg'] ?>
+                </option>
+            <?php endwhile; ?>
+        </select>
 
-    <button type="submit">Save</button>
-    <a href="penjualan.php?unlock=true"><button type="button">Cancel</button></a>
-</form>
+        <input type="number" name="jml_jual" placeholder="Jumlah Jual" value="<?= $edit ? $data['jml_jual'] : '' ?>" required>
+
+        <button type="submit">Save</button>
+        <a href="penjualan.php?unlock=true"><button type="button">Cancel</button></a>
+    </form>
+    <script>
+        const tabel = 'penjualan';
+        let activityTimeout;
+        const maxIdleTime = 5 * 60 * 1000;
+
+        function updateLastEdit() {
+            fetch(`../fungsi/update_last_edit.php?tabel=${tabel}`);
+        }
+
+        function resetActivityTimer() {
+            clearTimeout(activityTimeout);
+            updateLastEdit();
+            activityTimeout = setTimeout(() => {
+                alert("Sesi Anda di halaman form Penjualan telah berakhir karena tidak aktif selama 5 menit.");
+                window.location.href = "penjualan.php?unlock=true";
+            }, maxIdleTime);
+        }
+
+        ['click', 'keydown', 'mousemove', 'scroll'].forEach(evt => {
+            window.addEventListener(evt, resetActivityTimer);
+        });
+
+        resetActivityTimer();
+    </script>
+
 </body>
+
 </html>
