@@ -1,10 +1,9 @@
 <?php
 include '../db/connect.php';
 include '../fungsi/kunci.php';
-session_start();
 
-$_SESSION['user'] = $_SESSION['user'] ?? 'user_' . rand(1000, 9999);
-$user = $_SESSION['user'];
+// Identifier pengguna sekarang adalah alamat IP
+$user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'penjualan';
 
 $pengunci = kunci_sedang_digunakan($koneksi, $tabel);
