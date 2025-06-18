@@ -29,7 +29,7 @@ $barang_list = $koneksi->query("SELECT kode_brg, nama_brg FROM stok");
 <html>
 <head>
     <title>Form Penjualan</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/next.css">
 </head>
 <body>
 <h2><?= $edit ? 'Edit' : 'Tambah' ?> Data Penjualan</h2>

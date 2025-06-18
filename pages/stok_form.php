@@ -46,7 +46,7 @@ if (isset($_GET['edit'])) {
 <html>
 <head>
     <title>Form Barang</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/next.css">
 </head>
 <body>
 <h2>Form Barang</h2>
