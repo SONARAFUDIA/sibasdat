@@ -1,14 +1,12 @@
 <?php
 include '../db/connect.php';
 include '../fungsi/kunci.php';
-session_start();
 
-$_SESSION['user'] = $_SESSION['user'] ?? 'user_' . rand(1000, 9999);
-$user = $_SESSION['user'];
+// Identifier pengguna sekarang adalah alamat IP
+$user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'stok';
 
 $pengunci = kunci_sedang_digunakan($koneksi, $tabel);
-
 
 if ($pengunci && $pengunci !== $user) {
     echo "<div class='error-banner'>Record is edited by another user: <strong>$pengunci</strong></div>";
@@ -21,16 +19,6 @@ if (!$pengunci) {
     aktifkan_kunci($koneksi, $tabel, $user);
     $pengunci = $user; // update pengunci ke diri sendiri
 }
-
-if ($pengunci !== $user) {
-    echo "<div class='error-banner'>Form sedang digunakan oleh <strong>$pengunci</strong>. Anda tidak dapat mengaksesnya sekarang.</div>";
-    echo "<p style='text-align:center;'><a href='stok.php'>⬅ Kembali</a></p>";
-    exit;
-}
-
-
-// Jika belum terkunci, kunci sekarang
-aktifkan_kunci($koneksi, $tabel, $user);
 
 // Deteksi apakah ini edit atau insert
 if (isset($_GET['edit'])) {
@@ -58,7 +46,6 @@ if (isset($_GET['edit'])) {
     <button type="submit">Save</button>
     <a href="stok.php?unlock=true"><button type="button">Cancel</button></a>
 
-    <!-- <a href="stok.php"><button type="button">Cancel</button></a> -->
-</form>
+    </form>
 </body>
 </html>

@@ -1,10 +1,9 @@
 <?php
 include '../db/connect.php';
 include '../fungsi/kunci.php';
-session_start();
 
-$_SESSION['user'] = $_SESSION['user'] ?? 'user_' . rand(1000, 9999);
-$user = $_SESSION['user'];
+// Identifier pengguna sekarang adalah alamat IP
+$user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'stok';
 
 // Jika ada permintaan unlock dari URL, dan user adalah pemilik kunci
@@ -36,7 +35,7 @@ if (isset($_GET['unlock']) && kunci_sedang_digunakan($koneksi, $tabel) === $user
             <td>{$row['jml_stok']}</td>
             <td>
                 <a class='btn-aksi btn-edit' href='stok_form.php?edit={$row['kode_brg']}'>Edit</a>
-                <a class='btn-aksi btn-delete' href='../aksi/stok_proses.php?action=delete&kode={$row['kode_brg']}'>Delete</a>
+                <a class='btn-aksi btn-delete' href='../aksi/stok_proses.php?action=delete&kode={$row['kode_brg']}' onclick=\"return confirm('Apakah Anda yakin ingin menghapus data ini?');\">Delete</a>
             </td>
         </tr>";
     }
