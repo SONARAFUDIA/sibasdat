@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="css/next.css">
 </head>
 <body>
-    <h2>Silakan Login</h2>
+    <h2>Silahkan Login</h2>
     <?php
     if (isset($_GET['error'])) {
         echo "<p class='error-banner'>Username atau password salah.</p>";
