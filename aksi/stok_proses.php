@@ -2,12 +2,10 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-// Identifier pengguna sekarang adalah alamat IP
 $user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'stok';
 $pengunci = kunci_sedang_digunakan($koneksi, $tabel);
 
-// Cegah akses jika bukan pemilik kunci
 if ($pengunci !== false && $pengunci !== $user) {
     echo "<div class='error-banner'>Aksi ditolak. Form sedang digunakan oleh <strong>$pengunci</strong>.</div>";
     echo "<a href='../pages/stok.php'>⬅ Kembali</a>";

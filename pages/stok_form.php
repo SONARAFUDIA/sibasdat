@@ -2,7 +2,6 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-// Identifier pengguna sekarang adalah alamat IP
 $user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'stok';
 
@@ -14,13 +13,11 @@ if ($pengunci && $pengunci !== $user) {
     exit;
 }
 
-// Hanya aktifkan jika belum dikunci
 if (!$pengunci) {
     aktifkan_kunci($koneksi, $tabel, $user);
-    $pengunci = $user; // update pengunci ke diri sendiri
+    $pengunci = $user; 
 }
 
-// Deteksi apakah ini edit atau insert
 if (isset($_GET['edit'])) {
     $kode = $_GET['edit'];
     $q = $koneksi->query("SELECT * FROM stok WHERE kode_brg = '$kode'");

@@ -2,11 +2,9 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-// Identifier pengguna sekarang adalah alamat IP
 $user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'stok';
 
-// Jika ada permintaan unlock dari URL, dan user adalah pemilik kunci
 if (isset($_GET['unlock']) && kunci_sedang_digunakan($koneksi, $tabel) === $user) {
     nonaktifkan_kunci($koneksi, $tabel, $user);
 }

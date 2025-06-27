@@ -2,7 +2,6 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-// Identifier pengguna sekarang adalah alamat IP
 $user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'penjualan';
 

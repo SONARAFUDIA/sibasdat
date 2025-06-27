@@ -2,7 +2,6 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-// Identifier pengguna sekarang adalah alamat IP
 $user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'penjualan';
 
@@ -21,7 +20,6 @@ if ($pengunci !== $user) {
 $edit = isset($_GET['edit']);
 $data = $edit ? $koneksi->query("SELECT * FROM t_jual WHERE kd_trans = '{$_GET['edit']}'")->fetch_assoc() : null;
 
-// Ambil data barang dari tabel stok
 $barang_list = $koneksi->query("SELECT kode_brg, nama_brg FROM stok");
 ?>
 <!DOCTYPE html>
