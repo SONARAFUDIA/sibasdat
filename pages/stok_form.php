@@ -8,7 +8,7 @@ $tabel = 'stok';
 $pengunci = kunci_sedang_digunakan($koneksi, $tabel);
 
 if ($pengunci && $pengunci !== $user) {
-    echo "<div class='error-banner'>Record is edited by another user: <strong>$pengunci</strong></div>";
+    echo "<div class='error-banner'>Form sedang digunakan oleh <strong>$pengunci</strong>.</div>";
     echo "<p style='text-align:center;'><a href='stok.php'>⬅ Kembali</a></p>";
     exit;
 }
