@@ -1,27 +1,34 @@
 <?php
-define('KUNCI_TIMEOUT_MENIT', 5);
+/**
+ * File ini berisi fungsi untuk mengelola sistem penguncian form (advisory lock).
+ * Menggunakan fungsi bawaan MySQL untuk efisiensi dan keandalan.
+ */
 
-function kunci_sedang_digunakan($koneksi, $tabel) {
-    $result = $koneksi->query("SELECT * FROM kunci_edit WHERE tabel = '$tabel'");
-    $row = $result->fetch_assoc();
-
-    if ($row['sedang_edit'] && strtotime($row['last_edit']) < strtotime('-' . KUNCI_TIMEOUT_MENIT . ' minutes')) {
-        nonaktifkan_kunci($koneksi, $tabel, $row['edited_by']);
-        return false;
-    }
-
-    return $row['sedang_edit'] ? $row['edited_by'] : false;
+/**
+ * Mencoba untuk mendapatkan kunci (mengunci form).
+ * Jika form sudah dikunci oleh sesi lain, fungsi ini akan langsung gagal tanpa menunggu.
+ *
+ * @param mysqli $koneksi Objek koneksi database.
+ * @param string $tabel Nama tabel yang akan menjadi dasar nama kunci.
+ * @return bool True jika berhasil mendapatkan kunci, false jika gagal.
+ */
+function coba_kunci_form(mysqli $koneksi, string $tabel): bool {
+    $nama_kunci = "lock_form_{$tabel}";
+    // Timeout 0 berarti tidak akan menunggu, langsung gagal jika sudah terkunci.
+    $result = $koneksi->query("SELECT GET_LOCK('$nama_kunci', 0) as locked")->fetch_assoc();
+    
+    // GET_LOCK() mengembalikan 1 jika berhasil, 0 jika gagal (timeout atau sudah terkunci).
+    return $result['locked'] == 1;
 }
 
-function aktifkan_kunci($koneksi, $tabel, $user) {
-    $koneksi->query("UPDATE kunci_edit SET sedang_edit = TRUE, edited_by = '$user', last_edit = NOW() WHERE tabel = '$tabel'");
-}
-
-function nonaktifkan_kunci($koneksi, $tabel, $user) {
-    $result = $koneksi->query("SELECT edited_by FROM kunci_edit WHERE tabel = '$tabel'");
-    $row = $result->fetch_assoc();
-
-    if ($row['edited_by'] === $user) {
-        $koneksi->query("UPDATE kunci_edit SET sedang_edit = FALSE, edited_by = NULL WHERE tabel = '$tabel'");
-    }
+/**
+ * Melepaskan kunci yang sebelumnya didapatkan oleh sesi ini.
+ *
+ * @param mysqli $koneksi Objek koneksi database.
+ * @param string $tabel Nama tabel yang kuncinya akan dilepaskan.
+ * @return void
+ */
+function lepaskan_kunci_form(mysqli $koneksi, string $tabel): void {
+    $nama_kunci = "lock_form_{$tabel}";
+    $koneksi->query("SELECT RELEASE_LOCK('$nama_kunci')");
 }

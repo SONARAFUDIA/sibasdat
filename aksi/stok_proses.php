@@ -2,43 +2,30 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-// Identifier pengguna sekarang adalah alamat IP
-$user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'stok';
-$pengunci = kunci_sedang_digunakan($koneksi, $tabel);
-
-// Cegah akses jika bukan pemilik kunci
-if ($pengunci !== false && $pengunci !== $user) {
-    echo "<div class='error-banner'>Aksi ditolak. Form sedang digunakan oleh <strong>$pengunci</strong>.</div>";
-    echo "<a href='../pages/stok.php'>⬅ Kembali</a>";
-    exit;
-}
-
 $action = $_GET['action'] ?? '';
+$error = null;
 
 try {
     $koneksi->begin_transaction();
 
     switch ($action) {
         case 'insert':
-            $kode = $_POST['kode_brg'];
-            $nama = $_POST['nama_brg'];
-            $satuan = $_POST['satuan'];
-            $jumlah = $_POST['jml_stok'];
-            $koneksi->query("CALL insert_stok('$kode', '$nama', '$satuan', $jumlah)");
+            $stmt = $koneksi->prepare("CALL insert_stok(?, ?, ?, ?)");
+            $stmt->bind_param("sssi", $_POST['kode_brg'], $_POST['nama_brg'], $_POST['satuan'], $_POST['jml_stok']);
+            $stmt->execute();
             break;
 
         case 'update':
-            $kode = $_POST['kode_brg'];
-            $nama = $_POST['nama_brg'];
-            $satuan = $_POST['satuan'];
-            $jumlah = $_POST['jml_stok'];
-            $koneksi->query("CALL update_stok('$kode', '$nama', '$satuan', $jumlah)");
+            $stmt = $koneksi->prepare("CALL update_stok(?, ?, ?, ?)");
+            $stmt->bind_param("sssi", $_POST['kode_brg'], $_POST['nama_brg'], $_POST['satuan'], $_POST['jml_stok']);
+            $stmt->execute();
             break;
 
         case 'delete':
-            $kode = $_GET['kode'];
-            $koneksi->query("CALL delete_stok('$kode')");
+            $stmt = $koneksi->prepare("CALL delete_stok(?)");
+            $stmt->bind_param("s", $_GET['kode']);
+            $stmt->execute();
             break;
 
         default:
@@ -46,13 +33,22 @@ try {
     }
 
     $koneksi->commit();
-    nonaktifkan_kunci($koneksi, $tabel, $user);
-    header("Location: ../pages/stok.php");
-    exit;
 
 } catch (Exception $e) {
     $koneksi->rollback();
-    echo "<div class='error-banner'>Terjadi kesalahan: " . $e->getMessage() . "</div>";
+    $error = $e; // Simpan error untuk ditampilkan nanti
+    
+} finally {
+    // APA PUN YANG TERJADI (sukses atau gagal), lepaskan kuncinya.
+    lepaskan_kunci_form($koneksi, $tabel);
+}
+
+// Arahkan kembali atau tampilkan error setelah kunci dilepaskan
+if ($error) {
+    echo "<div class='error-banner'>Terjadi kesalahan: " . $error->getMessage() . "</div>";
     echo "<a href='../pages/stok.php'>⬅ Kembali</a>";
+} else {
+    header("Location: ../pages/stok.php");
+    exit;
 }
 ?>

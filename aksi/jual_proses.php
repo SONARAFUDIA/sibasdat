@@ -2,43 +2,30 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-// Identifier pengguna sekarang adalah alamat IP
-$user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'penjualan';
-$pengunci = kunci_sedang_digunakan($koneksi, $tabel);
-
-// Cegah jika bukan pemilik kunci
-if ($pengunci !== false && $pengunci !== $user) {
-    echo "<div class='error-banner'>Aksi ditolak. Form sedang digunakan oleh <strong>$pengunci</strong>.</div>";
-    echo "<a href='../pages/penjualan.php'>⬅ Kembali</a>";
-    exit;
-}
-
 $action = $_GET['action'] ?? '';
+$error = null;
 
 try {
     $koneksi->begin_transaction();
 
     switch ($action) {
         case 'insert':
-            $kd = $_POST['kd_trans'];
-            $tgl = $_POST['tgl_trans'];
-            $kode_brg = $_POST['kode_brg'];
-            $jumlah = $_POST['jml_jual'];
-            $koneksi->query("CALL insert_jual('$kd', '$tgl', '$kode_brg', $jumlah)");
+            $stmt = $koneksi->prepare("CALL insert_jual(?, ?, ?, ?)");
+            $stmt->bind_param("sssi", $_POST['kd_trans'], $_POST['tgl_trans'], $_POST['kode_brg'], $_POST['jml_jual']);
+            $stmt->execute();
             break;
 
         case 'update':
-            $kd = $_POST['kd_trans'];
-            $tgl = $_POST['tgl_trans'];
-            $kode_brg = $_POST['kode_brg'];
-            $jumlah = $_POST['jml_jual'];
-            $koneksi->query("CALL update_jual('$kd', '$tgl', '$kode_brg', $jumlah)");
+            $stmt = $koneksi->prepare("CALL update_jual(?, ?, ?, ?)");
+            $stmt->bind_param("sssi", $_POST['kd_trans'], $_POST['tgl_trans'], $_POST['kode_brg'], $_POST['jml_jual']);
+            $stmt->execute();
             break;
 
         case 'delete':
-            $kd = $_GET['kd_trans'];
-            $koneksi->query("CALL delete_jual('$kd')");
+            $stmt = $koneksi->prepare("CALL delete_jual(?)");
+            $stmt->bind_param("s", $_GET['kd_trans']);
+            $stmt->execute();
             break;
 
         default:
@@ -46,13 +33,22 @@ try {
     }
 
     $koneksi->commit();
-    nonaktifkan_kunci($koneksi, $tabel, $user);
-    header("Location: ../pages/penjualan.php");
-    exit;
 
 } catch (Exception $e) {
     $koneksi->rollback();
-    echo "<div class='error-banner'>Terjadi kesalahan: " . $e->getMessage() . "</div>";
+    $error = $e; // Simpan error untuk ditampilkan nanti
+
+} finally {
+    // APA PUN YANG TERJADI (sukses atau gagal), lepaskan kuncinya.
+    lepaskan_kunci_form($koneksi, $tabel);
+}
+
+// Arahkan kembali atau tampilkan error setelah kunci dilepaskan
+if ($error) {
+    echo "<div class='error-banner'>Terjadi kesalahan: " . $error->getMessage() . "</div>";
     echo "<a href='../pages/penjualan.php'>⬅ Kembali</a>";
+} else {
+    header("Location: ../pages/penjualan.php");
+    exit;
 }
 ?>

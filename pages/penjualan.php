@@ -2,13 +2,13 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-// Identifier pengguna sekarang adalah alamat IP
-$user = $_SERVER['REMOTE_ADDR'];
-$tabel = 'penjualan';
-
-if (isset($_GET['unlock']) && kunci_sedang_digunakan($koneksi, $tabel) === $user) {
-    nonaktifkan_kunci($koneksi, $tabel, $user);
+// Jika pengguna kembali ke halaman ini dengan parameter 'unlock' (misalnya dari tombol cancel)
+if (isset($_GET['unlock']) && $_GET['unlock'] === 'true') {
+    // Lepaskan kunci yang mungkin dipegang oleh sesi ini untuk tabel stok
+    lepaskan_kunci_form($koneksi, 'stok');
 }
+
+// ... sisa kode untuk menampilkan tabel stok ...
 ?>
 <!DOCTYPE html>
 <html>

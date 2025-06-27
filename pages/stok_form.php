@@ -2,22 +2,13 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-// Identifier pengguna sekarang adalah alamat IP
-$user = $_SERVER['REMOTE_ADDR'];
 $tabel = 'stok';
 
-$pengunci = kunci_sedang_digunakan($koneksi, $tabel);
-
-if ($pengunci && $pengunci !== $user) {
-    echo "<div class='error-banner'>Record is edited by another user: <strong>$pengunci</strong></div>";
+// Coba untuk mengunci form ini. Jika gagal, berarti sedang digunakan orang lain.
+if (!coba_kunci_form($koneksi, $tabel)) {
+    echo "<div class='error-banner'>Form ini sedang digunakan oleh pengguna lain. Silakan coba beberapa saat lagi.</div>";
     echo "<p style='text-align:center;'><a href='stok.php'>⬅ Kembali</a></p>";
     exit;
-}
-
-// Hanya aktifkan jika belum dikunci
-if (!$pengunci) {
-    aktifkan_kunci($koneksi, $tabel, $user);
-    $pengunci = $user; // update pengunci ke diri sendiri
 }
 
 // Deteksi apakah ini edit atau insert
@@ -45,7 +36,6 @@ if (isset($_GET['edit'])) {
     <input type="number" name="jml_stok" placeholder="Jumlah Stok" value="<?= $edit ? $data['jml_stok'] : '' ?>" required>
     <button type="submit">Save</button>
     <a href="stok.php?unlock=true"><button type="button">Cancel</button></a>
-
-    </form>
+</form>
 </body>
 </html>
