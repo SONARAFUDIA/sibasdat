@@ -2,7 +2,7 @@
 include '../db/connect.php';
 include '../fungsi/kunci.php';
 
-$user = $_SERVER['REMOTE_ADDR'];
+$user = $_SESSION['username'];
 $tabel = 'penjualan';
 
 $pengunci = kunci_sedang_digunakan($koneksi, $tabel);
